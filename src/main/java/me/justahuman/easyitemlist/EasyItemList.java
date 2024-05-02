@@ -2,6 +2,7 @@ package me.justahuman.easyitemlist;
 
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
+import dev.emi.emi.api.stack.Comparison;
 import dev.emi.emi.api.stack.EmiStack;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.component.DataComponentType;
@@ -40,13 +41,20 @@ public class EasyItemList implements ClientModInitializer, EmiPlugin {
 
     private void handleItem(EmiRegistry registry, ItemStack itemStack) {
         if (itemStack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
-            registry.addEmiStack(EmiStack.of(itemStack));
+            registerItem(registry, itemStack);
         } else {
             for (DataComponentType<?> componentType : COMPONENTS_TO_CHECK) {
                 if (itemStack.getComponentChanges().get(componentType) != null) {
-                    registry.addEmiStack(EmiStack.of(itemStack));
+                    registerItem(registry, itemStack);
+                    break;
                 }
             }
         }
+    }
+
+    private void registerItem(EmiRegistry registry, ItemStack itemStack) {
+        EmiStack emiStack = EmiStack.of(itemStack);
+        registry.setDefaultComparison(emiStack, Comparison.compareComponents());
+        registry.addEmiStack(emiStack);
     }
 }
