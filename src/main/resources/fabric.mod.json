@@ -17,6 +17,9 @@
   "entrypoints": {
     "client": [
       "me.justahuman.easyitemlist.EasyItemList"
+    ],
+    "emi": [
+      "me.justahuman.easyitemlist.EasyItemList"
     ]
   },
   "depends": {
