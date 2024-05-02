@@ -4,7 +4,6 @@ import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.stack.Comparison;
 import dev.emi.emi.api.stack.EmiStack;
-import dev.emi.emi.registry.EmiRegistryImpl;
 import dev.emi.emi.registry.EmiStackList;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.component.DataComponentType;
