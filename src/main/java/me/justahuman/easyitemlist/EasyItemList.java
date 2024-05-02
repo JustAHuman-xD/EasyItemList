@@ -54,6 +54,7 @@ public class EasyItemList implements ClientModInitializer, EmiPlugin {
 
     private void registerItem(EmiRegistry registry, ItemStack itemStack) {
         EmiStack emiStack = EmiStack.of(itemStack);
+        registry.removeEmiStacks(otherStack -> Comparison.compareComponents().compare(emiStack, otherStack));
         registry.setDefaultComparison(emiStack, Comparison.compareComponents());
         registry.addEmiStack(emiStack);
     }
