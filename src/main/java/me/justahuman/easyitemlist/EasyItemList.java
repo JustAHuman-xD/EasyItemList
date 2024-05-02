@@ -4,6 +4,8 @@ import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.stack.Comparison;
 import dev.emi.emi.api.stack.EmiStack;
+import dev.emi.emi.registry.EmiRegistryImpl;
+import dev.emi.emi.registry.EmiStackList;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.component.DataComponentType;
 import net.minecraft.component.DataComponentTypes;
@@ -40,22 +42,24 @@ public class EasyItemList implements ClientModInitializer, EmiPlugin {
     }
 
     private void handleItem(EmiRegistry registry, ItemStack itemStack) {
+        final EmiStack emiStack = EmiStack.of(itemStack);
+        for (EmiStack existingStack : EmiStackList.stacks) {
+            if (Comparison.compareComponents().compare(emiStack, existingStack)) {
+                return;
+            }
+        }
+
         if (itemStack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
-            registerItem(registry, itemStack);
+            registry.setDefaultComparison(emiStack, Comparison.compareComponents());
+            registry.addEmiStack(emiStack);
         } else {
             for (DataComponentType<?> componentType : COMPONENTS_TO_CHECK) {
                 if (itemStack.getComponentChanges().get(componentType) != null) {
-                    registerItem(registry, itemStack);
+                    registry.setDefaultComparison(emiStack, Comparison.compareComponents());
+                    registry.addEmiStack(emiStack);
                     break;
                 }
             }
         }
-    }
-
-    private void registerItem(EmiRegistry registry, ItemStack itemStack) {
-        EmiStack emiStack = EmiStack.of(itemStack);
-        registry.removeEmiStacks(otherStack -> Comparison.compareComponents().compare(emiStack, otherStack));
-        registry.setDefaultComparison(emiStack, Comparison.compareComponents());
-        registry.addEmiStack(emiStack);
     }
 }
