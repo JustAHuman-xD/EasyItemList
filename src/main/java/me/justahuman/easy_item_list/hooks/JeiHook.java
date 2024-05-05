@@ -1,6 +1,6 @@
-package me.justahuman.easyitemlist.hooks;
+package me.justahuman.easy_item_list.hooks;
 
-import me.justahuman.easyitemlist.api.Hook;
+import me.justahuman.easy_item_list.api.Hook;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -39,6 +39,6 @@ public class JeiHook extends Hook implements IModPlugin {
 
     @Override
     public @NotNull Identifier getPluginUid() {
-        return new Identifier("easyitemlist", "jei_hook");
+        return new Identifier("easy_item_list", "jei_hook");
     }
 }

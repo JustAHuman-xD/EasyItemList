@@ -1,8 +1,8 @@
-package me.justahuman.easyitemlist.hooks;
+package me.justahuman.easy_item_list.hooks;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import me.justahuman.easyitemlist.api.Hook;
+import me.justahuman.easy_item_list.api.Hook;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.EntryRegistry;
 import me.shedaniel.rei.api.common.entry.EntryStack;

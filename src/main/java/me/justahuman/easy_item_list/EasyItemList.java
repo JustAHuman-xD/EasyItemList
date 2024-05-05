@@ -1,4 +1,4 @@
-package me.justahuman.easyitemlist;
+package me.justahuman.easy_item_list;
 
 import net.fabricmc.api.ClientModInitializer;
 

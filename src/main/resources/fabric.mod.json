@@ -1,31 +1,39 @@
 {
   "schemaVersion": 1,
-  "id": "easyitemlist",
+  "id": "easy_item_list",
   "version": "${version}",
   "name": "EasyItemList",
-  "description": "Automatically adds nbt items in serverside recipes to EMI!",
-  "authors": [
-    "JustAHuman"
-  ],
+  "description": "Automatically adds server side custom items to JEI, REI, and EMI!",
+  "authors": [ "JustAHuman_xD" ],
   "contact": {
-    "website": "https://github.com/JustAHuman-xD/EasyItemList",
-    "repo": "https://github.com/JustAHuman-xD/EasyItemList"
+    "homepage": "https://modrinth.com/mod/easy-item-list",
+    "sources": "https://github.com/JustAHuman-xD/EasyItemList",
+    "issues": "https://github.com/JustAHuman-xD/EasyItemList/issues",
+    "discord": "https://discord.gg/y6fV6pbgHB"
   },
-  "license": "GPL-3.0",
-  "icon": "assets/easyitemlist/icon.png",
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/y6fV6pbgHB"
+      },
+      "update_checker": true
+    }
+  },
+  "license": "MIT",
+  "icon": "assets/easy_item_list/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "me.justahuman.easyitemlist.EasyItemList"
+      "me.justahuman.easy_item_list.EasyItemList"
     ],
     "emi": [
-      "me.justahuman.easyitemlist.hooks.EmiHook"
+      "me.justahuman.easy_item_list.hooks.EmiHook"
     ],
     "jei_mod_plugin": [
-      "me.justahuman.easyitemlist.hooks.JeiHook"
+      "me.justahuman.easy_item_list.hooks.JeiHook"
     ],
     "rei_client": [
-      "me.justahuman.easyitemlist.hooks.ReiHook"
+      "me.justahuman.easy_item_list.hooks.ReiHook"
     ]
   },
   "depends": {

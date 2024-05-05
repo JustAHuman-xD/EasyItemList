@@ -1,4 +1,4 @@
-package me.justahuman.easyitemlist.api;
+package me.justahuman.easy_item_list.api;
 
 import dev.emi.emi.api.stack.Comparison;
 import dev.emi.emi.api.stack.EmiStack;

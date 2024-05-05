@@ -1,11 +1,11 @@
-package me.justahuman.easyitemlist.hooks;
+package me.justahuman.easy_item_list.hooks;
 
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.stack.Comparison;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.registry.EmiStackList;
-import me.justahuman.easyitemlist.api.Hook;
+import me.justahuman.easy_item_list.api.Hook;
 import net.minecraft.item.ItemStack;
 
 public class EmiHook extends Hook implements EmiPlugin {
