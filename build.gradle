@@ -15,15 +15,32 @@ repositories {
         name = "TerraformersMC (EMI)"
         url = "https://maven.terraformersmc.com/"
     }
+
+    maven {
+        name = "BlameJared (JEI)"
+        url = "https://maven.blamejared.com/"
+    }
+
+    maven {
+        name = "Shedanial (REI)"
+        url = "https://maven.shedaniel.me/"
+    }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
     modImplementation ("dev.emi:emi-fabric:${project.emi_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+
+    modImplementation("mezz.jei:jei-${project.jei_version}") {
+        exclude(group: "mezz.jei")
+    }
+
+    modApi "me.shedaniel:RoughlyEnoughItems-fabric:15.0.728"
 }
 
 processResources {

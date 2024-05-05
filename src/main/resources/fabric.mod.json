@@ -19,7 +19,13 @@
       "me.justahuman.easyitemlist.EasyItemList"
     ],
     "emi": [
-      "me.justahuman.easyitemlist.EasyItemList"
+      "me.justahuman.easyitemlist.hooks.EmiHook"
+    ],
+    "jei_mod_plugin": [
+      "me.justahuman.easyitemlist.hooks.JeiHook"
+    ],
+    "rei_client": [
+      "me.justahuman.easyitemlist.hooks.ReiHook"
     ]
   },
   "depends": {
