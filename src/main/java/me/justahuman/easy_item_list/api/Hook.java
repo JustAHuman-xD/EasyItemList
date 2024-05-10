@@ -1,8 +1,5 @@
 package me.justahuman.easy_item_list.api;
 
-import dev.emi.emi.api.stack.Comparison;
-import dev.emi.emi.api.stack.EmiStack;
-import dev.emi.emi.registry.EmiStackList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentType;
 import net.minecraft.component.DataComponentTypes;
@@ -46,12 +43,6 @@ public abstract class Hook {
     public void handleItem(ItemStack itemStack) {
         if (alreadyAdded(itemStack)) {
             return;
-        }
-        final EmiStack emiStack = EmiStack.of(itemStack);
-        for (EmiStack existingStack : EmiStackList.stacks) {
-            if (Comparison.compareComponents().compare(emiStack, existingStack)) {
-                return;
-            }
         }
 
         if (itemStack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
