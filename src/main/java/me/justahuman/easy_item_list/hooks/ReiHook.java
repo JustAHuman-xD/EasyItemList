@@ -28,7 +28,7 @@ public class ReiHook extends Hook implements REIClientPlugin {
     @Override
     public void registerItemComparators(ItemComparatorRegistry registry) {
         registry.registerGlobal((context, stack) -> {
-            final long hash = EntryComparator.itemComponents().hash(ComparisonContext.EXACT, stack);
+            final long hash = EntryComparator.itemNbt().hash(ComparisonContext.EXACT, stack);
             return STACK_HASHES.contains(hash) ? hash : 0;
         });
     }
@@ -44,7 +44,7 @@ public class ReiHook extends Hook implements REIClientPlugin {
             return;
         }
         this.registry.addEntries(EntryStacks.of(itemStack));
-        STACK_HASHES.add(EntryComparator.itemComponents().hash(ComparisonContext.EXACT, itemStack));
+        STACK_HASHES.add(EntryComparator.itemNbt().hash(ComparisonContext.EXACT, itemStack));
     }
 
     public static ReiHook getInstance() {

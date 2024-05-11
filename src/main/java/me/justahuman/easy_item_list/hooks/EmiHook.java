@@ -18,13 +18,13 @@ public class EmiHook extends Hook implements EmiPlugin {
     @Override
     public boolean alreadyAdded(ItemStack itemStack) {
         final EmiStack emiStack = EmiStack.of(itemStack);
-        return EmiStackList.stacks.stream().anyMatch(stack -> Comparison.compareComponents().compare(emiStack, stack));
+        return EmiStackList.stacks.stream().anyMatch(stack -> Comparison.compareNbt().compare(emiStack, stack));
     }
 
     @Override
     public void addItemStack(ItemStack itemStack) {
         EmiStack emiStack = EmiStack.of(itemStack);
         EmiStackList.stacks.add(emiStack);
-        EmiComparisonDefaults.comparisons.put(emiStack, Comparison.compareComponents());
+        EmiComparisonDefaults.comparisons.put(emiStack, Comparison.compareNbt());
     }
 }
