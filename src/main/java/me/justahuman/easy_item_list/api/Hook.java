@@ -1,20 +1,18 @@
 package me.justahuman.easy_item_list.api;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentType;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.registry.BuiltinRegistries;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.world.World;
 
-import java.util.Set;
+import java.util.Objects;
 
 public abstract class Hook {
-    public static final Set<DataComponentType<?>> COMPONENTS_TO_CHECK = Set.of(DataComponentTypes.ITEM_NAME, DataComponentTypes.CUSTOM_NAME, DataComponentTypes.LORE, DataComponentTypes.FOOD, DataComponentTypes.CUSTOM_MODEL_DATA);
-    public static final RegistryWrapper.WrapperLookup LOOKUP = BuiltinRegistries.createWrapperLookup();
+    public static final DynamicRegistryManager MANAGER = DynamicRegistryManager.of(Registries.REGISTRIES);
 
     public abstract boolean alreadyAdded(ItemStack itemStack);
     public abstract void addItemStack(ItemStack itemStack);
@@ -25,7 +23,7 @@ public abstract class Hook {
             return;
         }
 
-        world.getRecipeManager().sortedValues().forEach(entry -> {
+        world.getRecipeManager().values().forEach(entry -> {
             if (entry.id().getNamespace().equals("minecraft") || !(entry.value() instanceof Recipe<?> recipe)) {
                 return;
             }
@@ -36,24 +34,45 @@ public abstract class Hook {
                 }
             }
 
-            handleItem(recipe.getResult(LOOKUP));
+            handleItem(recipe.getResult(MANAGER));
         });
     }
 
     public void handleItem(ItemStack itemStack) {
-        if (alreadyAdded(itemStack)) {
+        if (itemStack == null || alreadyAdded(itemStack)) {
             return;
         }
 
-        if (itemStack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
+        NbtCompound nbt = removeUseless(itemStack);
+        NbtCompound defaultNbt = removeUseless(itemStack.getItem().getDefaultStack());
+        if (!Objects.equals(nbt, defaultNbt)) {
             addItemStack(itemStack);
-        } else {
-            for (DataComponentType<?> componentType : COMPONENTS_TO_CHECK) {
-                if (itemStack.getComponentChanges().get(componentType) != null) {
-                    addItemStack(itemStack);
-                    break;
-                }
-            }
         }
+    }
+
+    private static NbtCompound removeUseless(ItemStack itemStack) {
+        NbtCompound nbt = itemStack.getNbt();
+        if (nbt == null || nbt.isEmpty()) {
+            return new NbtCompound();
+        }
+
+        nbt = nbt.copy();
+        nbt.remove("Damage");
+        nbt.remove("Enchantments");
+        nbt.remove("Patterns");
+        nbt.remove("Trim");
+        nbt.remove("StoredEnchantments");
+        nbt.remove("EntityTag");
+        nbt.remove("Fireworks");
+        nbt.remove("pages");
+        nbt.remove("author");
+        nbt.remove("generation");
+        nbt.remove("title");
+
+        NbtCompound display = nbt.contains("display", 10) ? nbt.getCompound("display") : null;
+        if (display != null) {
+            display.remove("color");
+        }
+        return nbt;
     }
 }
