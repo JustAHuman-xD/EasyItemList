@@ -40,7 +40,7 @@ dependencies {
         exclude(group: "mezz.jei")
     }
 
-    modApi "me.shedaniel:RoughlyEnoughItems-fabric:15.0.728"
+    modApi "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 }
 
 processResources {
