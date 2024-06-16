@@ -1,8 +1,10 @@
 package me.justahuman.easy_item_list.api;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentType;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
@@ -45,15 +47,22 @@ public abstract class Hook {
             return;
         }
 
-        if (itemStack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
+        if (isCustom(itemStack)) {
             addItemStack(itemStack);
-        } else {
-            for (DataComponentType<?> componentType : COMPONENTS_TO_CHECK) {
-                if (itemStack.getComponentChanges().get(componentType) != null) {
-                    addItemStack(itemStack);
-                    break;
-                }
+        }
+    }
+
+    public boolean isCustom(ItemStack itemStack) {
+        final ComponentMap components = itemStack.getComponents();
+        if (components.contains(DataComponentTypes.CUSTOM_DATA)) {
+            return true;
+        }
+
+        for (DataComponentType<?> componentType : COMPONENTS_TO_CHECK) {
+            if (itemStack.getComponentChanges().get(componentType) != null) {
+                return true;
             }
         }
+        return false;
     }
 }

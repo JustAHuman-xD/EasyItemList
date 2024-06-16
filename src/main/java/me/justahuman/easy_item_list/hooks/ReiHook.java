@@ -43,7 +43,7 @@ public class ReiHook extends Hook implements REIClientPlugin {
         if (this.registry == null) {
             return;
         }
-        this.registry.addEntries(EntryStacks.of(itemStack));
+        this.registry.addEntries(EntryStacks.of(itemStack.copyWithCount(1)));
         STACK_HASHES.add(EntryComparator.itemComponents().hash(ComparisonContext.EXACT, itemStack));
     }
 
