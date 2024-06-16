@@ -30,11 +30,11 @@ public abstract class Hook {
 
             for (Ingredient ingredient : recipe.getIngredients()) {
                 for (ItemStack itemStack : ingredient.getMatchingStacks()) {
-                    handleItem(itemStack);
+                    handleItem(itemStack.copyWithCount(1));
                 }
             }
 
-            handleItem(recipe.getResult(MANAGER));
+            handleItem(recipe.getResult(MANAGER).copyWithCount(1));
         });
     }
 
@@ -43,11 +43,15 @@ public abstract class Hook {
             return;
         }
 
-        NbtCompound nbt = removeUseless(itemStack);
-        NbtCompound defaultNbt = removeUseless(itemStack.getItem().getDefaultStack());
-        if (!Objects.equals(nbt, defaultNbt)) {
+        if (isCustom(itemStack)) {
             addItemStack(itemStack);
         }
+    }
+
+    public boolean isCustom(ItemStack itemStack) {
+        NbtCompound nbt = removeUseless(itemStack);
+        NbtCompound defaultNbt = removeUseless(itemStack.getItem().getDefaultStack());
+        return !Objects.equals(nbt, defaultNbt);
     }
 
     private static NbtCompound removeUseless(ItemStack itemStack) {
