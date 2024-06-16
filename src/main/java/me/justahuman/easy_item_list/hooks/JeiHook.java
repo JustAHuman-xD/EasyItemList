@@ -46,12 +46,12 @@ public class JeiHook extends Hook implements IModPlugin {
             interpreters.get(VanillaTypes.ITEM_STACK, item.getDefaultStack()).ifPresentOrElse(
                     interpreter -> {
                         interpreters.addInterpreter(VanillaTypes.ITEM_STACK, item, (stack, context) -> {
-                            return isCustom(stack) ? String.valueOf(stack.getComponents().hashCode()) : interpreter.apply(stack, context);
+                            return isCustom(stack) ? String.valueOf(stack.getOrCreateNbt().hashCode()) : interpreter.apply(stack, context);
                         });
                     },
                     () -> {
                         interpreters.addInterpreter(VanillaTypes.ITEM_STACK, item, (stack, context) -> {
-                            return isCustom(stack) ? String.valueOf(stack.getComponents().hashCode()) : IIngredientSubtypeInterpreter.NONE;
+                            return isCustom(stack) ? String.valueOf(stack.getOrCreateNbt().hashCode()) : IIngredientSubtypeInterpreter.NONE;
                         });
                     }
             );
