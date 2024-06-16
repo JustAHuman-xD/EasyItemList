@@ -23,7 +23,7 @@ public class EmiHook extends Hook implements EmiPlugin {
 
     @Override
     public void addItemStack(ItemStack itemStack) {
-        EmiStack emiStack = EmiStack.of(itemStack).setAmount(1);
+        EmiStack emiStack = EmiStack.of(itemStack);
         EmiStackList.stacks.add(emiStack);
         EmiComparisonDefaults.comparisons.put(emiStack, Comparison.compareComponents());
     }
