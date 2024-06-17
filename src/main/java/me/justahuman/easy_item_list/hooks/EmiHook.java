@@ -25,6 +25,6 @@ public class EmiHook extends Hook implements EmiPlugin {
     public void addItemStack(ItemStack itemStack) {
         EmiStack emiStack = EmiStack.of(itemStack);
         EmiStackList.stacks.add(emiStack);
-        EmiComparisonDefaults.comparisons.put(emiStack, Comparison.compareComponents());
+        EmiComparisonDefaults.comparisons.put(emiStack.getKey(), Comparison.compareComponents());
     }
 }
