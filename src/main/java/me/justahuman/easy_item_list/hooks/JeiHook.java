@@ -7,16 +7,16 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
-import mezz.jei.api.registration.IRuntimeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IIngredientManager;
-import mezz.jei.library.ingredients.subtypes.SubtypeInterpreters;
-import mezz.jei.library.load.registration.SubtypeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
+import mezz.jei.common.ingredients.subtypes.SubtypeInterpreters;
+import mezz.jei.common.load.registration.SubtypeRegistration;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -28,8 +28,8 @@ public class JeiHook extends Hook implements IModPlugin {
     private IIngredientManager manager;
 
     @Override
-    public void registerRuntime(IRuntimeRegistration registration) {
-        this.manager = registration.getIngredientManager();
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        this.manager = jeiRuntime.getIngredientManager();
         this.helper = this.manager.getIngredientHelper(VanillaTypes.ITEM_STACK);
         load();
     }
@@ -41,7 +41,7 @@ public class JeiHook extends Hook implements IModPlugin {
         }
 
         SubtypeInterpreters interpreters = registration.getInterpreters();
-        for (Map.Entry<RegistryKey<Item>, Item> itemEntry : Registries.ITEM.getEntrySet()) {
+        for (Map.Entry<RegistryKey<Item>, Item> itemEntry : Registry.ITEM.getEntrySet()) {
             Item item = itemEntry.getValue();
             interpreters.get(VanillaTypes.ITEM_STACK, item.getDefaultStack()).ifPresentOrElse(
                     interpreter -> {
@@ -61,7 +61,12 @@ public class JeiHook extends Hook implements IModPlugin {
     @Override
     public boolean alreadyAdded(ItemStack itemStack) {
         final String id = helper.getUniqueId(itemStack, UidContext.Ingredient);
-        return this.manager.getIngredientByUid(VanillaTypes.ITEM_STACK, id).isPresent();
+        for (ItemStack ingredient : this.manager.getAllIngredients(VanillaTypes.ITEM_STACK)) {
+            if (helper.getUniqueId(ingredient, UidContext.Ingredient).equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

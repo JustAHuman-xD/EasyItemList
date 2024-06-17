@@ -4,15 +4,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registries;
 import net.minecraft.world.World;
 
 import java.util.Objects;
 
 public abstract class Hook {
-    public static final DynamicRegistryManager MANAGER = DynamicRegistryManager.of(Registries.REGISTRIES);
-
     public abstract boolean alreadyAdded(ItemStack itemStack);
     public abstract void addItemStack(ItemStack itemStack);
 
@@ -29,16 +25,23 @@ public abstract class Hook {
 
             for (Ingredient ingredient : recipe.getIngredients()) {
                 for (ItemStack itemStack : ingredient.getMatchingStacks()) {
-                    handleItem(itemStack.copyWithCount(1));
+                    handleItem(itemStack);
                 }
             }
 
-            handleItem(recipe.getOutput(MANAGER).copyWithCount(1));
+            handleItem(recipe.getOutput());
         });
     }
 
     public void handleItem(ItemStack itemStack) {
-        if (itemStack == null || alreadyAdded(itemStack)) {
+        if (itemStack == null) {
+            return;
+        }
+
+        itemStack = itemStack.copy();
+        itemStack.setCount(1);
+
+        if (alreadyAdded(itemStack)) {
             return;
         }
 
