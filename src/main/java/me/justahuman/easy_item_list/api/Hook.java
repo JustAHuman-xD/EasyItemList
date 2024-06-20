@@ -6,11 +6,16 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class Hook {
+    protected static final List<ItemStack> ITEM_STACKS = new ArrayList<>();
+
     public abstract boolean alreadyAdded(ItemStack itemStack);
-    public abstract void addItemStack(ItemStack itemStack);
+    public abstract void addItemStacks();
 
     public void load() {
         final World world = MinecraftClient.getInstance().world;
@@ -31,6 +36,11 @@ public abstract class Hook {
 
             handleItem(recipe.getOutput());
         });
+
+        if (!ITEM_STACKS.isEmpty()) {
+            ITEM_STACKS.sort(Comparator.comparing(stack -> stack.getName().getString()));
+            addItemStacks();
+        }
     }
 
     public void handleItem(ItemStack itemStack) {
@@ -41,13 +51,11 @@ public abstract class Hook {
         itemStack = itemStack.copy();
         itemStack.setCount(1);
 
-        if (alreadyAdded(itemStack)) {
+        if (!isCustom(itemStack) || alreadyAdded(itemStack)) {
             return;
         }
 
-        if (isCustom(itemStack)) {
-            addItemStack(itemStack);
-        }
+        ITEM_STACKS.add(itemStack);
     }
 
     public boolean isCustom(ItemStack itemStack) {
