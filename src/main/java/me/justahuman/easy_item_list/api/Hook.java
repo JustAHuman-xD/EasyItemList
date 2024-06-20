@@ -29,10 +29,11 @@ public abstract class Hook {
         }
 
         world.getRecipeManager().values().forEach(entry -> {
-            if (entry.id().getNamespace().equals("minecraft") || !(entry.value() instanceof Recipe<?> recipe)) {
+            if (entry.id().getNamespace().equals("minecraft") || !(entry.value() instanceof Recipe<?>)) {
                 return;
             }
 
+            Recipe<?> recipe = entry.value();
             for (Ingredient ingredient : recipe.getIngredients()) {
                 for (ItemStack itemStack : ingredient.getMatchingStacks()) {
                     handleItem(itemStack.copyWithCount(1));
