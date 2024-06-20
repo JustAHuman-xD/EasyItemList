@@ -1,5 +1,6 @@
 package me.justahuman.easy_item_list.api;
 
+import me.justahuman.easy_item_list.EasyItemList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -34,7 +35,11 @@ public abstract class Hook {
                 }
             }
 
-            handleItem(recipe.getOutput());
+            try {
+                handleItem(recipe.getOutput());
+            } catch (Exception e) {
+                EasyItemList.LOGGER.error("Unexpected error getting the output of recipe " + recipe.getId(), e);
+            }
         });
 
         if (!ITEM_STACKS.isEmpty()) {
