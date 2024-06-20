@@ -28,23 +28,28 @@ public class ReiHook extends Hook implements REIClientPlugin {
     @Override
     public void registerItemComparators(ItemComparatorRegistry registry) {
         registry.registerGlobal((context, stack) -> {
-            final long hash = EntryComparator.itemComponents().hash(ComparisonContext.EXACT, stack);
+            final long hash = hash(stack);
             return STACK_HASHES.contains(hash) ? hash : 0;
         });
     }
 
     @Override
     public boolean alreadyAdded(ItemStack itemStack) {
-        return this.registry != null && this.registry.alreadyContain(EntryStacks.of(itemStack));
+        final long hash = hash(itemStack);
+        return this.registry != null && ITEM_STACKS.stream().anyMatch(stack -> hash(stack) == hash);
     }
 
     @Override
-    public void addItemStack(ItemStack itemStack) {
+    public void addItemStacks() {
         if (this.registry == null) {
             return;
         }
-        this.registry.addEntries(EntryStacks.of(itemStack));
-        STACK_HASHES.add(EntryComparator.itemComponents().hash(ComparisonContext.EXACT, itemStack));
+        this.registry.addEntries(ITEM_STACKS.stream().map(EntryStacks::of).toList());
+        STACK_HASHES.addAll(ITEM_STACKS.stream().map(this::hash).toList());
+    }
+
+    private long hash(ItemStack stack) {
+        return EntryComparator.itemComponents().hash(ComparisonContext.EXACT, stack);
     }
 
     public static ReiHook getInstance() {

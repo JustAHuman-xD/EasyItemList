@@ -15,17 +15,23 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class Hook {
     public static final Set<DataComponentType<?>> COMPONENTS_TO_CHECK = Set.of(DataComponentTypes.ITEM_NAME, DataComponentTypes.CUSTOM_NAME, DataComponentTypes.LORE, DataComponentTypes.FOOD, DataComponentTypes.CUSTOM_MODEL_DATA);
     public static final RegistryWrapper.WrapperLookup LOOKUP = BuiltinRegistries.createWrapperLookup();
+    protected static final List<ItemStack> ITEM_STACKS = new ArrayList<>();
 
     public abstract boolean alreadyAdded(ItemStack itemStack);
-    public abstract void addItemStack(ItemStack itemStack);
+    public abstract void addItemStacks();
 
     public void load() {
+        ITEM_STACKS.clear();
+
         final World world = MinecraftClient.getInstance().world;
         if (world == null || world.getRecipeManager() == null) {
             return;
@@ -44,16 +50,19 @@ public abstract class Hook {
 
             handleItem(recipe.getResult(LOOKUP).copyWithCount(1));
         });
+
+        if (!ITEM_STACKS.isEmpty()) {
+            ITEM_STACKS.sort(Comparator.comparing(stack -> stack.getName().getString()));
+            addItemStacks();
+        }
     }
 
     public void handleItem(ItemStack itemStack) {
-        if (alreadyAdded(itemStack)) {
+        if (!isCustom(itemStack) || alreadyAdded(itemStack)) {
             return;
         }
 
-        if (isCustom(itemStack)) {
-            addItemStack(itemStack);
-        }
+        ITEM_STACKS.add(itemStack);
     }
 
     public boolean isCustom(ItemStack itemStack) {
@@ -84,6 +93,18 @@ public abstract class Hook {
                 if (display.isEmpty()) {
                     nbt.remove("display");
                 }
+
+                nbt.remove("Damage");
+                nbt.remove("Enchantments");
+                nbt.remove("Patterns");
+                nbt.remove("Trim");
+                nbt.remove("StoredEnchantments");
+                nbt.remove("EntityTag");
+                nbt.remove("Fireworks");
+                nbt.remove("pages");
+                nbt.remove("author");
+                nbt.remove("generation");
+                nbt.remove("title");
             }
 
             if (!nbt.isEmpty()) {

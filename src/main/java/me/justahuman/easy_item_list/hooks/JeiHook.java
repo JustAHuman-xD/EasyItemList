@@ -61,12 +61,12 @@ public class JeiHook extends Hook implements IModPlugin {
     @Override
     public boolean alreadyAdded(ItemStack itemStack) {
         final String id = helper.getUniqueId(itemStack, UidContext.Ingredient);
-        return this.manager.getIngredientByUid(VanillaTypes.ITEM_STACK, id).isPresent();
+        return ITEM_STACKS.stream().anyMatch(stack -> helper.getUniqueId(stack, UidContext.Ingredient).equals(id));
     }
 
     @Override
-    public void addItemStack(ItemStack itemStack) {
-        this.manager.addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, Set.of(itemStack));
+    public void addItemStacks() {
+        this.manager.addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, ITEM_STACKS);
     }
 
     @Override
