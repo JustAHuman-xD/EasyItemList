@@ -1,6 +1,8 @@
 package me.justahuman.easy_item_list.api;
 
 import me.justahuman.easy_item_list.EasyItemList;
+import me.justahuman.easy_item_list.mixin.TransformRecipeAccessor;
+import me.justahuman.easy_item_list.mixin.TrimRecipeAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -32,10 +34,14 @@ public abstract class Hook {
                 return;
             }
 
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                for (ItemStack itemStack : ingredient.getMatchingStacks()) {
-                    handleItem(itemStack.copyWithCount(1));
-                }
+            if (recipe instanceof TransformRecipeAccessor transformRecipe) {
+                handleIngredients(transformRecipe.getBase(), transformRecipe.getTemplate(), transformRecipe.getAddition());
+                handleItem(transformRecipe.getResult().copyWithCount(1));
+                return;
+            } else if (recipe instanceof TrimRecipeAccessor trimRecipe) {
+                handleIngredients(trimRecipe.getBase(), trimRecipe.getTemplate(), trimRecipe.getAddition());
+            } else {
+                handleIngredients(recipe.getIngredients().toArray(Ingredient[]::new));
             }
 
             try {
@@ -48,6 +54,14 @@ public abstract class Hook {
         if (!ITEM_STACKS.isEmpty()) {
             ITEM_STACKS.sort(Comparator.comparing(stack -> stack.getName().getString()));
             addItemStacks();
+        }
+    }
+
+    public void handleIngredients(Ingredient... ingredients) {
+        for (Ingredient ingredient : ingredients) {
+            for (ItemStack itemStack : ingredient.getMatchingStacks()) {
+                handleItem(itemStack.copyWithCount(1));
+            }
         }
     }
 
