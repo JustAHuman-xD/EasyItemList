@@ -29,11 +29,7 @@ public abstract class Hook {
                 return;
             }
 
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                for (ItemStack itemStack : ingredient.getMatchingStacks()) {
-                    handleItem(itemStack);
-                }
-            }
+            handleIngredients(recipe.getIngredients().toArray(Ingredient[]::new));
 
             try {
                 handleItem(recipe.getOutput());
@@ -45,6 +41,14 @@ public abstract class Hook {
         if (!ITEM_STACKS.isEmpty()) {
             ITEM_STACKS.sort(Comparator.comparing(stack -> stack.getName().getString()));
             addItemStacks();
+        }
+    }
+
+    public void handleIngredients(Ingredient... ingredients) {
+        for (Ingredient ingredient : ingredients) {
+            for (ItemStack itemStack : ingredient.getMatchingStacks()) {
+                handleItem(itemStack);
+            }
         }
     }
 
