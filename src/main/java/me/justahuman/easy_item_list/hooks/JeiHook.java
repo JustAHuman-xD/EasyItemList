@@ -20,7 +20,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Set;
 
 @JeiPlugin
 public class JeiHook extends Hook implements IModPlugin {
@@ -61,7 +60,8 @@ public class JeiHook extends Hook implements IModPlugin {
     @Override
     public boolean alreadyAdded(ItemStack itemStack) {
         final String id = helper.getUniqueId(itemStack, UidContext.Ingredient);
-        return ITEM_STACKS.stream().anyMatch(stack -> helper.getUniqueId(stack, UidContext.Ingredient).equals(id));
+        return ITEM_STACKS.stream().anyMatch(stack -> stack.getItem() == itemStack.getItem()
+                && helper.getUniqueId(stack, UidContext.Ingredient).equals(id));
     }
 
     @Override
