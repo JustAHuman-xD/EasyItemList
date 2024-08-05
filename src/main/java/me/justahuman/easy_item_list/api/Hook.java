@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Hook {
     protected static final List<ItemStack> ITEM_STACKS = new ArrayList<>();
+    protected static final Map<ItemStack, String> NAMESPACES = new HashMap<>();
 
     public abstract boolean alreadyAdded(ItemStack itemStack);
     public abstract void addItemStacks();
@@ -29,10 +32,11 @@ public abstract class Hook {
                 return;
             }
 
-            handleIngredients(recipe.getIngredients().toArray(Ingredient[]::new));
+            String namespace = recipe.getId().getNamespace();
+            handleIngredients(namespace, recipe.getIngredients().toArray(Ingredient[]::new));
 
             try {
-                handleItem(recipe.getOutput());
+                handleItem(recipe.getOutput(), namespace);
             } catch (Exception e) {
                 EasyItemList.LOGGER.error("Unexpected error getting the output of recipe " + recipe.getId(), e);
             }
@@ -40,19 +44,20 @@ public abstract class Hook {
 
         if (!ITEM_STACKS.isEmpty()) {
             ITEM_STACKS.sort(Comparator.comparing(stack -> stack.getName().getString()));
+            ITEM_STACKS.sort(Comparator.comparing(NAMESPACES::get));
             addItemStacks();
         }
     }
 
-    public void handleIngredients(Ingredient... ingredients) {
+    public void handleIngredients(String namespace, Ingredient... ingredients) {
         for (Ingredient ingredient : ingredients) {
             for (ItemStack itemStack : ingredient.getMatchingStacks()) {
-                handleItem(itemStack);
+                handleItem(itemStack, namespace);
             }
         }
     }
 
-    public void handleItem(ItemStack itemStack) {
+    public void handleItem(ItemStack itemStack, String namespace) {
         if (itemStack == null) {
             return;
         }
@@ -65,6 +70,7 @@ public abstract class Hook {
         }
 
         ITEM_STACKS.add(itemStack);
+        NAMESPACES.put(itemStack, namespace);
     }
 
     public boolean isCustom(ItemStack itemStack) {
