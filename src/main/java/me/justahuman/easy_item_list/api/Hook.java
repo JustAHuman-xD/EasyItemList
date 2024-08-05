@@ -16,10 +16,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Hook {
     public static final DynamicRegistryManager MANAGER = DynamicRegistryManager.of(Registries.REGISTRIES);
     protected static final List<ItemStack> ITEM_STACKS = new ArrayList<>();
+    protected static final Map<ItemStack, String> NAMESPACES = new HashMap<>();
 
     public abstract boolean alreadyAdded(ItemStack itemStack);
     public abstract void addItemStacks();
@@ -36,18 +39,19 @@ public abstract class Hook {
             }
 
             Recipe<?> recipe = entry.value();
+            String namespace = entry.id().getNamespace();
             if (recipe instanceof TransformRecipeAccessor transformRecipe) {
-                handleIngredients(transformRecipe.getBase(), transformRecipe.getTemplate(), transformRecipe.getAddition());
-                handleItem(transformRecipe.getResult().copyWithCount(1));
+                handleIngredients(namespace, transformRecipe.getBase(), transformRecipe.getTemplate(), transformRecipe.getAddition());
+                handleItem(transformRecipe.getResult().copyWithCount(1), namespace);
                 return;
             } else if (recipe instanceof TrimRecipeAccessor trimRecipe) {
-                handleIngredients(trimRecipe.getBase(), trimRecipe.getTemplate(), trimRecipe.getAddition());
+                handleIngredients(namespace, trimRecipe.getBase(), trimRecipe.getTemplate(), trimRecipe.getAddition());
             } else {
-                handleIngredients(recipe.getIngredients().toArray(Ingredient[]::new));
+                handleIngredients(namespace, recipe.getIngredients().toArray(Ingredient[]::new));
             }
 
             try {
-                handleItem(recipe.getResult(MANAGER).copyWithCount(1));
+                handleItem(recipe.getResult(MANAGER).copyWithCount(1), namespace);
             } catch (Exception e) {
                 EasyItemList.LOGGER.error("Unexpected error getting the output of recipe " + entry.id(), e);
             }
@@ -55,24 +59,26 @@ public abstract class Hook {
 
         if (!ITEM_STACKS.isEmpty()) {
             ITEM_STACKS.sort(Comparator.comparing(stack -> stack.getName().getString()));
+            ITEM_STACKS.sort(Comparator.comparing(NAMESPACES::get));
             addItemStacks();
         }
     }
 
-    public void handleIngredients(Ingredient... ingredients) {
+    public void handleIngredients(String namespace, Ingredient... ingredients) {
         for (Ingredient ingredient : ingredients) {
             for (ItemStack itemStack : ingredient.getMatchingStacks()) {
-                handleItem(itemStack.copyWithCount(1));
+                handleItem(itemStack.copyWithCount(1), namespace);
             }
         }
     }
 
-    public void handleItem(ItemStack itemStack) {
+    public void handleItem(ItemStack itemStack, String namespace) {
         if (itemStack == null || !isCustom(itemStack) || alreadyAdded(itemStack)) {
             return;
         }
 
         ITEM_STACKS.add(itemStack);
+        NAMESPACES.put(itemStack, namespace);
     }
 
     public boolean isCustom(ItemStack itemStack) {

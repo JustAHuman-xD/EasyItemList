@@ -36,7 +36,8 @@ public class ReiHook extends Hook implements REIClientPlugin {
     @Override
     public boolean alreadyAdded(ItemStack itemStack) {
         final long hash = hash(itemStack);
-        return this.registry != null && ITEM_STACKS.stream().anyMatch(stack -> hash(stack) == hash);
+        return this.registry != null && ITEM_STACKS.stream().anyMatch(stack ->
+                stack.getItem() == itemStack.getItem() && hash(stack) == hash);
     }
 
     @Override
